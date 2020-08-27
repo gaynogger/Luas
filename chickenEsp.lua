@@ -1,4 +1,4 @@
--- Chicken Esp By Scape#4313
+-- Chicken Esp By Scape#4313 // yu0r
 --
 -- Notes:
 -- Change max model size to your liking (100 is stupid big)
