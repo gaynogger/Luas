@@ -4,14 +4,12 @@
 -- Change max model size to your liking (100 is stupid big)
 -- Feel free to use bounding box and color converter functions in your code
 -- Sadly getMins and getMaxs doesnt account for model size so boxes will not scale
+
 local VIS_CHIK = gui.Reference('VISUALS')
-local chicktab = gui.Tab(VIS_CHIK, "chicktab.tab", "Chicken ESP")
+local chicktab = gui.Tab(VIS_CHIK, "chicktab.tab", "Chicken Changer")
 
 local fontSize = 12;
 local font = draw.CreateFont("Consolas", fontSize);
--- Gui Setup
-local menuY = 368;
-local menuX = 328;
 
 -- Esp Gui
 local espRef = gui.Groupbox(chicktab, 'Chicken ESP', 305, 5, 296, 500)
@@ -27,25 +25,29 @@ chickenSkeleton:SetDescription("Draw chicken skeleton");
 local chickenLeader = gui.Checkbox(espRef, "chicken_leader", "Leader's Name",      false);
 local chickenLeaderColor = gui.ColorPicker(chickenLeader, "chicken_leader_color", "Chicken name color", 255, 255, 255, 255);
 chickenLeader:SetDescription("Draw leader's name");
+
 -- Model Gui
-local modelRef = gui.Groupbox(chicktab, 'Chicken Model', 5, 5, 296, 500)
+local modelRef = gui.Groupbox(chicktab, 'Chicken Changer', 5, 5, 296, 500)
 
 local chickenColor = gui.Combobox(modelRef, 'chickenColor', 'Chicken Color','Off','Solid', 'Rainbow')
 local chickenColorSolid = gui.ColorPicker(modelRef, "chickenColorSolid", "Chicken Color", 255, 255, 255, 255);
-local chickenRainbowSpeed = gui.Slider(modelRef, 'chickenRainbowSpeed', 'Chicken Rainbow Speed', 1.0, 0.25, 4.0,.01)
+local chickenRainbowSpeed = gui.Slider(modelRef, 'chickenRainbowSpeed', 'Rainbow Speed', 1.0, 0.25, 4.0,.01)
 chickenColor:SetDescription("Change color of model");
 
-local chickenModel = gui.Combobox(modelRef, 'chicken_model', "Chicken Theme", 'Default Chicken', 'Party Chicken', 'Ghost Chicken', 'Festive Chicken', 'Easter Chicken', 'Jack-o-Chicken');
+local chickenModel = gui.Combobox(modelRef, 'chickenModel', "Chicken Theme", 'Default Chicken', 'Party Chicken', 'Ghost Chicken', 'Festive Chicken', 'Easter Chicken', 'Jack-o-Chicken');
 chickenModel:SetDescription("Change chicken model");
 
-local chickenSkin = gui.Combobox(modelRef, 'lua_ChickenSkin', 'Chicken Skin','Default', 'Other')
+local chickenSkin = gui.Combobox(modelRef, 'chickenSkin', 'Chicken Skin','Default', 'Other')
 chickenSkin:SetDescription("Change chicken skin");
 
-local chickenScale = gui.Slider(modelRef, "chicken_scale", "Chicken Scale", 1.0, 0.25, 10.0,.01); -- Highest ive gone is 100 and things get ugly
-chickenModel:SetDescription("Change chicken scale");
+local chickenScale = gui.Slider(modelRef, "chickenScale", "Chicken Scale", 1.0, 0.25, 10.0,.01); 
+chickenScale:SetDescription("Change chicken scale");
+
+local chicken_scaletype = gui.Combobox(modelRef, 'chicken_scaletype', 'Chicken Scale Type','Default', 'Other')
+chicken_scaletype:SetDescription("Change scale type");
 
 local chickenAnimation = gui.Combobox(modelRef, 'chickenAnimation', 'Chicken Animation','Default', 'Anti-Aim', 'Bhop', 'Come at me bro')
-chickenAnimation:SetDescription("Change chicken animation");
+chickenAnimation:SetDescription("Change chicken animation (scare to update)");
 
 local chickenPartyMode = gui.Checkbox(modelRef, 'chickenPartyMode', 'Party Mode', false)
 chickenPartyMode:SetDescription("Enable sv_partymode 1");
@@ -161,6 +163,7 @@ local function hDraw()
 		local scale = chicken:GetProp('m_flModelScale');
 		local m_nSkin = chicken:GetProp('m_nSkin')
 		local m_nSequence = chicken:GetProp('m_nSequence')
+		local m_ScaleType = chicken:GetProp('m_ScaleType')
 
 		-- Box esp
 		local left, top, right, bottom = getBoundingBox(chicken);
@@ -216,10 +219,10 @@ local function hDraw()
         end
 		
 		--Skin changer
-			if m_nSkin ~= chicken_skin then
-				chicken:SetProp('m_nSkin', chicken_skin)
+			if m_nSkin ~= chickenSkin:GetValue() then
+				chicken:SetProp('m_nSkin', chickenSkin:GetValue())
 			end
-		
+				
 		--Animation
 			if chickenAnimation:GetValue() == 0 then
 				elseif chickenAnimation:GetValue() == 1 then
@@ -264,6 +267,11 @@ local function hDraw()
 		else
 		end
 		
+		--Scale Type
+			if m_ScaleType ~= chicken_scaletype:GetValue() then
+				chicken:SetProp('m_ScaleType', chicken_scaletype:GetValue())
+			end
+
 		-- Scale changer
 		if scale ~= chickenScale:GetValue() then
 			chicken:SetProp('m_flModelScale', chickenScale:GetValue())
